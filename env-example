@@ -1,10 +1,21 @@
-MONGO_URI=mongodb://xx:xx@ip:27017
-PORT=3000
+# Cloudflare token with enough rights to edit Zones
 cloudflareApiToken=xx
+
+# Nginx proxy manager credentials
 nginxProxyManagerUsername=email@gmail.com
 nginxProxyManagerPassword=password
+
+# Email for SSL certs
 letsEncryptContactEmails=email@gmail.com
+
+# Public URL for nginx proxy manager
 nginxProxyManagerHost=http://localhost:81
+
+# Useful if your services are in the same remote ip
 nginxProxyManagerDefaultUpstreamHost=localhost
+
+# Useful if your services are in the same remote ip
 cloudflareDefaultARecordValue=localhost
+
+# CF Zone Auto-detect (Enter the full domain when adding a proxy: foo.domain.com)
 CLOUDFLARE_ZONE_NAME_TO_ID_MAP={"domain.com":"xx"}

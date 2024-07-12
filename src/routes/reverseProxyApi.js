@@ -67,7 +67,6 @@ router.get('/proxies', async (req, res) => {
     try {
         const proxies = await ReverseProxy.find();
         res.json(proxies);
-        await logEvent('API_LIST_PROXIES_SUCCESS', { count: proxies.length });
     } catch (error) {
         console.error('Error fetching proxies:', error);
         res.status(500).json({ error: 'An error occurred while fetching proxies' });

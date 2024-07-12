@@ -7,7 +7,7 @@ services:
       - "3000"
     environment:
       - NODE_ENV=production
-      - MONGODB_URI=mongodb://mongo:27017/proxyflare
+      - MONGO_URI=mongodb://mongo:27017/proxyflare
     env_file:
      - .env
     depends_on:
