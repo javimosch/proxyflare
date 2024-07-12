@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= proxy ? 'Edit' : 'New' %> Reverse Proxy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-4">
+        <h1 class="text-3xl font-bold mb-4"><%= proxy ? 'Edit' : 'New' %> Reverse Proxy</h1>
+        <form action="<%= proxy ? `/edit/${proxy._id}` : '/' %>" method="POST" class="space-y-4">
+            <div>
+                <label for="domains" class="block">Domains (comma-separated):</label>
+                <input type="text" id="domains" name="domains" value="<%= proxy ? proxy.domains.join(', ') : '' %>" required class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label for="proxyHost" class="block">Proxy Host:</label>
+                <input type="text" id="proxyHost" name="proxyHost" value="<%= proxy ? proxy.proxyHost : '' %>" required class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label for="proxyPort" class="block">Proxy Port:</label>
+                <input type="number" id="proxyPort" name="proxyPort" value="<%= proxy ? proxy.proxyPort : '' %>" required class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label for="proxyProtocol" class="block">Proxy Protocol:</label>
+                <select id="proxyProtocol" name="proxyProtocol" class="w-full p-2 border rounded">
+                    <option value="http" <%= proxy && proxy.proxyProtocol === 'http' ? 'selected' : '' %>>HTTP</option>
+                    <option value="https" <%= proxy && proxy.proxyProtocol === 'https' ? 'selected' : '' %>>HTTPS</option>
+                </select>
+            </div>
+            <div>
+                <label for="proxyStatus" class="block">Proxy Status:</label>
+                <input type="checkbox" id="proxyStatus" name="proxyStatus" <%= proxy.proxyStatus ? 'checked' : '' %> class="mr-2">
+                <span>Active</span>
+            </div>
+            <div>
+                <label for="dnsStatus" class="block">DNS Status:</label>
+                <input type="checkbox" id="dnsStatus" name="dnsStatus" <%= proxy.dnsStatus ? 'checked' : '' %> class="mr-2">
+                <span>Configured</span>
+            </div>
+            <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded">Save</button>
+        </form>
+    </div>
+</body>
+</html>

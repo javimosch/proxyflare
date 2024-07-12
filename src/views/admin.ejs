@@ -1,0 +1,181 @@
+<div class="container mx-auto">
+  <div class="bg-white p-6 rounded shadow-md mt-8">
+    <a href="/new" class="bg-blue-500 text-white px-4 py-2 rounded"
+      >Add New Proxy</a
+    >
+    <div class="flex justify-between items-center mb-4 mt-4">
+      <h2 class="text-2xl font-bold">Reverse Proxies</h2>
+      <button
+        id="updateProxies"
+        class="bg-blue-500 text-white px-4 py-2 rounded"
+      >
+        Update Proxies
+      </button>
+    </div>
+
+    <table id="proxiesTable" class="w-full mt-4">
+      <thead>
+        <tr>
+          <th class="text-left">Domains</th>
+          <th class="text-left">Proxy Host</th>
+          <th class="text-left">Proxy Port</th>
+          <th class="text-left">Proxy Protocol</th>
+          <th class="text-left">Proxy Status</th>
+          <th class="text-left">DNS Status</th>
+          <th class="text-left">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% proxies.forEach(proxy => { %>
+        <tr>
+          <td>
+            <% proxy.domains.forEach((domain, index) => { %>
+              <a href="https://<%= domain %>" target="_blank" class="text-blue-600 hover:text-blue-800 underline">
+                <%= domain %>
+              </a>
+              <% if (index < proxy.domains.length - 1) { %>, <% } %>
+            <% }); %>
+          </td>
+          <td><%= proxy.proxyHost %></td>
+          <td><%= proxy.proxyPort %></td>
+          <td><%= proxy.proxyProtocol %></td>
+          <td><%= proxy.proxyStatus ? 'Active' : 'Inactive' %></td>
+          <td><%= proxy.dnsStatus ? 'Configured' : 'Not Configured' %></td>
+          <td>
+            <a href="/edit/<%= proxy._id %>" class="text-blue-500">Edit</a>
+            <form
+              action="/delete/<%= proxy._id %>"
+              method="POST"
+              class="inline"
+            >
+              <button type="submit" class="text-red-500">Delete</button>
+            </form>
+          </td>
+        </tr>
+        <% }) %>
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+
+    function updateProxiesTable(){
+      fetch("/api/proxies")
+          .then((response) => response.json())
+          .then((proxies) => {
+            const tableBody = proxiesTable.querySelector("tbody");
+            tableBody.innerHTML = "";
+            proxies.forEach((proxy) => {
+              const row = `
+                <tr>
+                  <td>${proxy.domains.map(domain => 
+                    `<a href="https://${domain}" target="_blank" class="text-blue-600 hover:text-blue-800 underline">${domain}</a>`
+                  ).join(", ")}</td>
+                  <td>${proxy.proxyHost}</td>
+                  <td>${proxy.proxyPort}</td>
+                  <td>${proxy.proxyProtocol}</td>
+                  <td>${proxy.proxyStatus ? "Active" : "Inactive"}</td>
+                  <td>${proxy.dnsStatus ? "Configured" : "Not Configured"}</td>
+                  <td>
+                    <a href="/edit/${proxy._id}" class="text-blue-500">Edit</a>
+                    <form action="/delete/${
+                      proxy._id
+                    }" method="POST" class="inline">
+                      <button type="submit" class="text-red-500">Delete</button>
+                    </form>
+                  </td>
+                </tr>
+              `;
+              tableBody.innerHTML += row;
+            });
+          })
+          .catch((error) => console.error("Error fetching proxies:", error));
+    }
+    document.addEventListener("DOMContentLoaded", function () {
+      const updateProxiesButton = document.getElementById("updateProxies");
+      const proxiesTable = document.getElementById("proxiesTable");
+
+      updateProxiesButton.addEventListener("click", function () {
+        updateProxiesTable()
+      });
+    });
+  </script>
+
+  <!-- Add this section where you want it to appear in your index.ejs file -->
+  <div class="bg-white p-6 rounded shadow-md mt-8">
+    <h2 class="text-2xl font-bold mb-4">Proxy Configuration Cron Job</h2>
+    <div class="flex items-center space-x-4">
+      <button id="startCron" class="bg-green-500 text-white px-4 py-2 rounded">
+        Start Cron
+      </button>
+      <button id="stopCron" class="bg-red-500 text-white px-4 py-2 rounded">
+        Stop Cron
+      </button>
+      <span id="cronStatus" class="ml-4">Status: Unknown</span>
+    </div>
+  </div>
+
+  <!-- Add this after the reverse proxies table -->
+  <div class="bg-white p-6 rounded shadow-md mt-8">
+    <h2 class="text-2xl font-bold mb-4">Recent Events</h2>
+    <div class="flex items-center mb-4">
+      <button
+        id="updateEvents"
+        class="bg-blue-500 text-white px-4 py-2 rounded mr-4"
+      >
+        Update Events
+      </button>
+      <label class="flex items-center">
+        <input type="checkbox" id="autoUpdate" class="mr-2" />
+        Auto-update every 5 seconds
+      </label>
+    </div>
+    <div class="overflow-x-auto">
+      <table id="eventsTable" class="w-full table-auto">
+        <thead>
+          <tr>
+            <th class="text-left px-4 py-2">Action</th>
+            <th class="text-left px-4 py-2">Details</th>
+            <th class="text-left px-4 py-2">Timestamp</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Events will be populated here -->
+        </tbody>
+      </table>
+    </div>
+    <script src="/js/events.js"></script>
+  </div>
+
+  <!-- Add this script at the end of your index.ejs file -->
+  <script>
+    function updateCronStatus() {
+      fetch("/api/cron/status")
+        .then((response) => response.json())
+        .then((data) => {
+          document.getElementById(
+            "cronStatus"
+          ).textContent = `Status: ${data.status}`;
+        })
+        .catch((error) => console.error("Error fetching cron status:", error));
+    }
+
+    document.getElementById("startCron").addEventListener("click", () => {
+      fetch("/api/cron/start", { method: "POST" })
+        .then(() => updateCronStatus())
+        .catch((error) => console.error("Error starting cron:", error));
+    });
+
+    document.getElementById("stopCron").addEventListener("click", () => {
+      fetch("/api/cron/stop", { method: "POST" })
+        .then(() => updateCronStatus())
+        .catch((error) => console.error("Error stopping cron:", error));
+    });
+
+    // Update status on page load
+    updateCronStatus();
+
+    // Update status every 5 seconds
+    setInterval(updateCronStatus, 5000);
+  </script>
+</div>

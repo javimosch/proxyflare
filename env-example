@@ -1,0 +1,10 @@
+MONGO_URI=mongodb://xx:xx@ip:27017
+PORT=3000
+cloudflareApiToken=xx
+nginxProxyManagerUsername=email@gmail.com
+nginxProxyManagerPassword=password
+letsEncryptContactEmails=email@gmail.com
+nginxProxyManagerHost=http://localhost:81
+nginxProxyManagerDefaultUpstreamHost=localhost
+cloudflareDefaultARecordValue=localhost
+CLOUDFLARE_ZONE_NAME_TO_ID_MAP={"domain.com":"xx"}
