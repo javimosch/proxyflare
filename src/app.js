@@ -2,8 +2,18 @@ const express = require('express');
 const mongoose = require('mongoose');
 const path = require('path');
 require('dotenv').config();
-
+const basicAuth = require('express-basic-auth');
 const app = express();
+
+if (process.env.AUTH_USER && process.env.AUTH_PASSWORD) {
+    // Basic Authentication Middleware
+    app.use(basicAuth({
+        users: { [process.env.AUTH_USER]: process.env.AUTH_PASSWORD },
+        challenge: true,
+        realm: 'Proxyflare',
+    }));
+}
+
 const PORT = process.env.PORT || 3000;
 
 const { swaggerUi, specs } = require('./swager');
@@ -13,9 +23,9 @@ const proxyConfigCron = require('./cron/proxyConfigCron');
 require('./cron/eventPruneCron')
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {dbName:process.env.MONGO_DBNAME||'proxy_gui', useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch(err => console.error('MongoDB connection error:', err));
+mongoose.connect(process.env.MONGO_URI, { dbName: process.env.MONGO_DBNAME || 'proxy_gui', useNewUrlParser: true, useUnifiedTopology: true })
+    .then(() => console.log('Connected to MongoDB'))
+    .catch(err => console.error('MongoDB connection error:', err));
 
 // Set up EJS as the view engine
 app.set('view engine', 'ejs');
