@@ -73,7 +73,7 @@ async function configureProxies(domains = []) {
         console.error('Error configuring proxies:', error);
         await logEvent('CONFIGURE_PROXIES_FAIL', { error: error.message, timestamp: new Date() });
     }finally{
-        isConfiguring=falsedomains = []
+        isConfiguring=false
     }
 }
 
