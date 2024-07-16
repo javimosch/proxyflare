@@ -22,3 +22,7 @@ Manage your reverse proxies with the power of Nginx Proxy Manager and Cloudflare
 
 - Configure .env
 - docker compose up -d
+
+## How it looks like
+
+![image](https://github.com/user-attachments/assets/68657ee9-d91f-4cf9-8250-4fa50591b1d7)
