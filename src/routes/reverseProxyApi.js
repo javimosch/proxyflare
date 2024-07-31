@@ -4,6 +4,9 @@ const ReverseProxy = require('../models/ReverseProxy');
 const { configureReverseProxyNginxDns } = require('../utils/proxy');
 const { logEvent } = require('../utils/logger');
 
+const authMiddleware = require('../middleware/authMiddleware');
+router.use('/', authMiddleware);
+
 /**
  * @swagger
  * components:
@@ -41,8 +44,6 @@ const { logEvent } = require('../utils/logger');
  *         proxyHost: "backend-service"
  *         proxyPort: 8080
  *         proxyProtocol: "http"
- *         dnsStatus: false
- *         proxyStatus: false
  */
 
 /**
@@ -51,6 +52,8 @@ const { logEvent } = require('../utils/logger');
  *   get:
  *     summary: Retrieve a list of all reverse proxies
  *     tags: [ReverseProxy]
+ *     security:
+ *       - BearerAuth: []
  *     responses:
  *       200:
  *         description: A list of reverse proxies
@@ -79,6 +82,8 @@ router.get('/proxies', async (req, res) => {
  *   post:
  *     summary: Create or update a reverse proxy
  *     tags: [ReverseProxy]
+ *     security:
+ *       - BearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -147,6 +152,8 @@ router.post('/reverse-proxy', async (req, res) => {
  *   delete:
  *     summary: Delete a reverse proxy
  *     tags: [ReverseProxy]
+ *     security:
+ *       - BearerAuth: []
  *     parameters:
  *       - in: path
  *         name: domain

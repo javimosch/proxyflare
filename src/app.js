@@ -5,15 +5,6 @@ require('dotenv').config();
 const basicAuth = require('express-basic-auth');
 const app = express();
 
-if (process.env.AUTH_USER && process.env.AUTH_PASSWORD) {
-    // Basic Authentication Middleware
-    app.use(basicAuth({
-        users: { [process.env.AUTH_USER]: process.env.AUTH_PASSWORD },
-        challenge: true,
-        realm: 'Proxyflare',
-    }));
-}
-
 const PORT = process.env.PORT || 3000;
 
 const { swaggerUi, specs } = require('./swager');
@@ -36,11 +27,22 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
+app.use('/api', require('./routes/reverseProxyApi'));
+
+if (process.env.AUTH_USER && process.env.AUTH_PASSWORD) {
+    // Basic Authentication Middleware
+    app.use(basicAuth({
+        users: { [process.env.AUTH_USER]: process.env.AUTH_PASSWORD },
+        challenge: true,
+        realm: 'Proxyflare',
+    }));
+}
+
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
-app.use('/api', require('./routes/reverseProxyApi'));
+app.use('/api/internal', require('./routes/apiKeyRoutes'));
 app.use('/', require('./routes/reverseProxy'));
 
 
