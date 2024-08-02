@@ -54,7 +54,7 @@ async function configureProxies(domains = []) {
             if (proxies.length > 0) {
                 console.log('Configuring proxies (nginx reverse proxy)...');
                 await Promise.all(proxies.map(async p => {
-                    await createOrUpdateProxyHost(p.domains,p.proxyHost,p.proxyPort,p.proxyProtocol)
+                    await createOrUpdateProxyHost(p.domains,p.proxyHost,p.proxyPort,p.proxyProtocol, {advancedConfig:p.advancedConfig})
                     p.proxyStatus = true
                     return p.save()
                 }))

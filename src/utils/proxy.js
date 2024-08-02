@@ -29,7 +29,7 @@ async function configureReverseProxyNginxDns(reverseProxyId) {
         // Nginx Proxy Manager configuration
         if (!proxy.proxyStatus) {
             try {
-                await createOrUpdateProxyHost(proxy.domains, proxy.proxyHost, proxy.proxyPort, proxy.proxyProtocol);
+                await createOrUpdateProxyHost(proxy.domains, proxy.proxyHost, proxy.proxyPort, proxy.proxyProtocol,{advancedConfig:proxy.advancedConfig});
                 proxy.proxyStatus = true;
                 console.log(`Proxy configured for ${proxy.domains.join(', ')}`);
             } catch (error) {

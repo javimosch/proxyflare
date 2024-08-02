@@ -19,7 +19,10 @@ const reverseProxySchema = new mongoose.Schema({
   dnsStatus: {
     type: Boolean,
     default: false
-  }
+  },
+  advancedConfig: {
+    type: String
+  },
 }, { timestamps: true });
 
 module.exports = mongoose.model('ReverseProxy', reverseProxySchema);
