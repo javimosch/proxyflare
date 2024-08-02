@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    expose:
+      - "3000"
+    environment:
+      - NODE_ENV=production
+      - MONGO_URI=mongodb://mongo:27017/proxyflare
+    env_file:
+     - .env
+    depends_on:
+      - mongo
+    restart: unless-stopped
+    ports:
+      - '8882:3000'
+  mongo:
+    image: mongo:latest
+    volumes:
+      - mongo-data:/data/db
+    restart: unless-stopped
+
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    restart: unless-stopped
+    ports:
+      - '8880:80'
+      - '8881:81'
+      - '4443:443'
+    volumes:
+      - npm-data:/data
+      - npm-letsencrypt:/etc/letsencrypt
+    depends_on:
+      - app
+
+volumes:
+  mongo-data:
+  npm-data:
+  npm-letsencrypt:

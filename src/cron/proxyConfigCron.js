@@ -43,7 +43,7 @@ async function configureProxies(domains = []) {
                 await logEvent('CONFIGURE_PROXIES_DNS_SUCCESS', { timestamp: new Date(), proxies });
             } else {
                 console.log('No proxies dns config needed')
-                await logEvent('CONFIGURE_PROXIES_DNS_WAITING', { timestamp: new Date(), proxies });
+                //await logEvent('CONFIGURE_PROXIES_DNS_WAITING', { timestamp: new Date(), proxies });
             }
         } catch (err) {
             await logEvent('CONFIGURE_PROXIES_DNS_FAIL', { timestamp: new Date(), err: err.isAxiosError ? err.response.data : err.stack });
@@ -61,7 +61,7 @@ async function configureProxies(domains = []) {
                 await logEvent('CONFIGURE_PROXIES_NGINX_PROXY_HOST_SUCCESS', { timestamp: new Date(), proxies });
             } else {
                 console.log('No proxies dns config needed')
-                await logEvent('CONFIGURE_PROXIES_NGINX_PROXY_HOST_WAITING', { timestamp: new Date(), proxies });
+                //await logEvent('CONFIGURE_PROXIES_NGINX_PROXY_HOST_WAITING', { timestamp: new Date(), proxies });
             }
         } catch (err) {
             await logEvent('CONFIGURE_PROXIES_NGINX_PROXY_HOST_FAIL', { timestamp: new Date(), err: err.isAxios ? err.response.data : err.stack });
@@ -82,7 +82,7 @@ const job = cron.schedule('*/10 * * * * *', async () => {
     console.log('Running proxy configuration cron job');
     await configureProxies();
 },{
-    scheduled:false
+    scheduled:true //false to disable
 });
 
 let scope 

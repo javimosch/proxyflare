@@ -5,7 +5,6 @@ const { configureReverseProxyNginxDns } = require('../utils/proxy');
 const { logEvent } = require('../utils/logger');
 
 const authMiddleware = require('../middleware/authMiddleware');
-router.use('/', authMiddleware);
 
 /**
  * @swagger
@@ -48,36 +47,6 @@ router.use('/', authMiddleware);
 
 /**
  * @swagger
- * /proxies:
- *   get:
- *     summary: Retrieve a list of all reverse proxies
- *     tags: [ReverseProxy]
- *     security:
- *       - BearerAuth: []
- *     responses:
- *       200:
- *         description: A list of reverse proxies
- *         content:
- *           application/json:
- *             schema:
- *               type: array
- *               items:
- *                 $ref: '#/components/schemas/ReverseProxy'
- *       500:
- *         description: Server error
- */
-router.get('/proxies', async (req, res) => {
-    try {
-        const proxies = await ReverseProxy.find();
-        res.json(proxies);
-    } catch (error) {
-        console.error('Error fetching proxies:', error);
-        res.status(500).json({ error: 'An error occurred while fetching proxies' });
-    }
-});
-
-/**
- * @swagger
  * /reverse-proxy:
  *   post:
  *     summary: Create or update a reverse proxy
@@ -102,9 +71,9 @@ router.get('/proxies', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.post('/reverse-proxy', async (req, res) => {
+router.post('/reverse-proxy',authMiddleware, async (req, res) => {
     try {
-        const { domains, proxyHost, proxyPort, proxyProtocol } = req.body;
+        const { domains, proxyHost, proxyPort, proxyProtocol, advancedConfig } = req.body;
 
         if (!domains || !Array.isArray(domains) || domains.length === 0) {
             return res.status(400).json({ error: 'Domains must be a non-empty array' });
@@ -120,6 +89,7 @@ router.post('/reverse-proxy', async (req, res) => {
             proxy.proxyProtocol = proxyProtocol;
             proxy.dnsStatus = false;
             proxy.proxyStatus = false;
+            proxy.advancedConfig = advancedConfig
         } else {
             // Create new proxy
             proxy = new ReverseProxy({
@@ -128,7 +98,8 @@ router.post('/reverse-proxy', async (req, res) => {
                 proxyPort,
                 proxyProtocol,
                 dnsStatus: false,
-                proxyStatus: false
+                proxyStatus: false,
+                advancedConfig
             });
         }
 
@@ -169,7 +140,7 @@ router.post('/reverse-proxy', async (req, res) => {
  *       500:
  *         description: Server error
  */
-router.delete('/reverse-proxy/:domain', async (req, res) => {
+router.delete('/reverse-proxy/:domain',authMiddleware, async (req, res) => {
     try {
         const domain = req.params.domain;
         const proxy = await ReverseProxy.findOneAndDelete({ domains: domain });
