@@ -36,7 +36,7 @@ echo "Deploying to $REMOTE_BASE_PATH/$NAME"
 
 ssh $SSH_USER_HOST "mkdir -p $REMOTE_BASE_PATH/$NAME"
 
-rsync -avz --exclude 'deploy.sh' --exclude 'node_modules' --exclude '.env' --include '.env.prod' . $SSH_USER_HOST:$REMOTE_BASE_PATH/$NAME
+rsync -avz --exclude 'deploy.sh' --exclude 'node_modules' --exclude '.env' --exclude .git --exclude debug.log --exclude error.log --exclude access.log --include '.env.prod' . $SSH_USER_HOST:$REMOTE_BASE_PATH/$NAME
 
 # Check if docker-compose.yml file exists
 if ssh $SSH_USER_HOST "test -f $REMOTE_BASE_PATH/$NAME/docker-compose.yml"; then

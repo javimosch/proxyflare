@@ -219,7 +219,9 @@ module.exports = scope = {
             'Content-Type': 'application/json'
           }
         });
-        console.log('DNS record updated successfully');
+        console.log('DNS record updated successfully',{
+          data: updateResponse?.response?.data||updateResponse.data||updateResponse||""
+        });
         return updateResponse.data;
       } else {
         // If the record doesn't exist, create a new one
@@ -235,7 +237,9 @@ module.exports = scope = {
             'Content-Type': 'application/json'
           }
         });
-        console.log('DNS record created successfully');
+        console.log('DNS record created successfully',{
+          data: createResponse?.response?.data||createResponse.data||createResponse||""
+        });
         return createResponse.data;
       }
     } catch (error) {
