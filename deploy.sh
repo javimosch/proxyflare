@@ -36,7 +36,23 @@ echo "Deploying to $REMOTE_BASE_PATH/$NAME"
 
 ssh $SSH_USER_HOST "mkdir -p $REMOTE_BASE_PATH/$NAME"
 
-rsync -avz --exclude 'deploy.sh' --exclude 'node_modules' --exclude '.env' --exclude .git --exclude debug.log --exclude error.log --exclude access.log --include '.env.prod' . $SSH_USER_HOST:$REMOTE_BASE_PATH/$NAME
+rsync -avz --exclude 'deploy.sh' --exclude 'node_modules' --exclude .git --exclude debug.log --exclude error.log --exclude access.log --exclude '.env' --include '.env.prod' . $SSH_USER_HOST:$REMOTE_BASE_PATH/$NAME
+
+# Check if .env file exists on the remote server
+if ! ssh $SSH_USER_HOST "test -f $REMOTE_BASE_PATH/$NAME/.env"; then
+  echo ".env file not found. Please provide the content for the .env file."
+  echo "Enter the content for your .env file (Ctrl+D to finish):"
+  
+  # Read the user input for .env content
+  ENV_CONTENT=""
+  while IFS= read -r line; do
+    ENV_CONTENT+="$line"$'\n'
+  done
+
+  # Create .env file with the content
+  ssh $SSH_USER_HOST "echo -e \"$ENV_CONTENT\" > $REMOTE_BASE_PATH/$NAME/.env"
+  echo ".env file has been created on the remote server."
+fi
 
 # Check if docker-compose.yml file exists
 if ssh $SSH_USER_HOST "test -f $REMOTE_BASE_PATH/$NAME/docker-compose.yml"; then
